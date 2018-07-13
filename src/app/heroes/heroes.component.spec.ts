@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 
 import { DebugElement } from '../../../node_modules/@angular/core';
 import { HEROES } from '../heroes.mock';
-import { SharedModule } from '../shared.module';
+import { SharedModule } from '../shared/shared.module';
 import { HeroesComponent } from './heroes.component';
 import { textContent, click } from '../app.test';
 
