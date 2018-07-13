@@ -1,11 +1,13 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { HEROES } from '@test/heroes.mock';
+import { click, textContent } from '@test/test-helper';
 
 import { DebugElement } from '../../../node_modules/@angular/core';
-import { HEROES } from '@test/heroes.mock';
 import { SharedModule } from '../shared/shared.module';
 import { HeroesComponent } from './heroes.component';
-import { textContent, click } from '@test/test-helper';
+
 
 describe('HeroesComponent', () => {
   let component: HeroesComponent;
@@ -14,6 +16,7 @@ describe('HeroesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      schemas: [NO_ERRORS_SCHEMA],
       imports: [SharedModule],
       declarations: [HeroesComponent]
     })
@@ -51,74 +54,17 @@ describe('HeroesComponent', () => {
     expect(textContent(firstHeroName)).toBe('Mr. Nice');
   });
 
-  it('should not render hero when not select', () => {
-    const selectedHero = de.query(By.css('.selected_hero'));
-    expect(selectedHero).toBeFalsy();
+  it('should have no selected hero when on init', () => {
+    expect(component.selectedHero).toBeFalsy();
   });
 
-  it('should render selected hero when select (whenStable)', () => {
-
+  it('should change selected hero when select new hero', () => {
     // arrange
     const secondHero = de.query(By.css('.hero__item:nth-child(2)'));
-
     // act
     click(secondHero);
     fixture.detectChanges();
-
     // assert selected hero
-    const details = de.query(By.css('.selected_hero__details'));
-    expect(textContent(details)).toBe('NARCO Details');
-
-    const id = de.query(By.css('.selected_hero__id'));
-    expect(textContent(id)).toBe('12');
-
-    fixture.whenStable().then(() => {
-      const name = de.query(By.css('.selected_hero__name'));
-      expect(name.nativeElement.value).toBe('Narco');
-    });
-  });
-
-  it('should render selected hero when select (fakeAsync & flush)', fakeAsync(() => {
-
-    // arrange
-    const secondHero = de.query(By.css('.hero__item:nth-child(2)'));
-
-    // act
-    click(secondHero);
-    fixture.detectChanges();
-    flush();
-
-    // assert selected hero
-    const details = de.query(By.css('.selected_hero__details'));
-    expect(textContent(details)).toBe('NARCO Details');
-
-    const id = de.query(By.css('.selected_hero__id'));
-    expect(textContent(id)).toBe('12');
-
-    const name = de.query(By.css('.selected_hero__name'));
-    expect(name.nativeElement.value).toBe('Narco');
-  }));
-
-  describe('should render selected hero when select (async)', () => {
-
-    beforeEach(async(() => {
-      // arrange
-      const secondHero = de.query(By.css('.hero__item:nth-child(2)'));
-      // act
-      click(secondHero);
-      fixture.detectChanges();
-    }));
-
-    it('assert selected hero', () => {
-      // assert selected hero
-      const details = de.query(By.css('.selected_hero__details'));
-      expect(textContent(details)).toBe('NARCO Details');
-
-      const id = de.query(By.css('.selected_hero__id'));
-      expect(textContent(id)).toBe('12');
-
-      const name = de.query(By.css('.selected_hero__name'));
-      expect(name.nativeElement.value).toBe('Narco');
-    });
+    expect(component.selectedHero).toBe(HEROES[1]);
   });
 });
