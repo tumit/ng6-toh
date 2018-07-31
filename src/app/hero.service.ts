@@ -63,6 +63,20 @@ export class HeroService {
     );
   }
 
+  searchHeroes(term: string): Observable<Hero[]> {
+    if (!term.trim()) {
+      return of([]);
+    }
+
+    // const params = new URLSearchParams();
+    // params.append('name_like', term);
+
+    return this.http.get<Hero[]>(`${this.heroesUrl}?name_like=${term}`).pipe(
+      tap(hs => this.log(`search heroes size=${hs.length}`)),
+      catchError(this.handleError(`search heroes`, []))
+    );
+  }
+
   private log(message: string) {
     this.messageService.add(`HeroService: ${message}`);
   }
