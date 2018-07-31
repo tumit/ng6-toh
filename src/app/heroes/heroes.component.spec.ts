@@ -1,6 +1,12 @@
+import { Location } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { routes } from '@app/app-routing.module';
+import { DashboardComponent } from '@app/dashboard/dashboard.component';
+import { HeroDetailComponent } from '@app/hero-detail/hero-detail.component';
 import { HEROES } from '@test/heroes.mock';
 import { click, textContent } from '@test/test-helper';
 
@@ -8,19 +14,26 @@ import { DebugElement } from '../../../node_modules/@angular/core';
 import { SharedModule } from '../shared/shared.module';
 import { HeroesComponent } from './heroes.component';
 
-
 describe('HeroesComponent', () => {
   let component: HeroesComponent;
   let fixture: ComponentFixture<HeroesComponent>;
   let de: DebugElement;
+  let router: Router;
+  let location: Location;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
-      imports: [SharedModule],
-      declarations: [HeroesComponent]
+      imports: [SharedModule, RouterTestingModule.withRoutes(routes)],
+      declarations: [HeroesComponent, DashboardComponent, HeroDetailComponent]
     })
       .compileComponents();
+
+    // init router
+    router = TestBed.get(Router);
+    router.initialNavigation();
+    location = TestBed.get(Location);
+
     fixture = TestBed.createComponent(HeroesComponent);
     component = fixture.componentInstance;
 
@@ -58,13 +71,13 @@ describe('HeroesComponent', () => {
     expect(component.selectedHero).toBeFalsy();
   });
 
-  it('should change selected hero when select new hero', () => {
+  it('should navigate to detail when select hero', fakeAsync(() => {
     // arrange
-    const secondHero = de.query(By.css('.hero__item:nth-child(2)'));
+    const secondHero = de.queryAll(By.css('.hero__link'))[1];
     // act
     click(secondHero);
-    fixture.detectChanges();
+    tick();
     // assert selected hero
-    expect(component.selectedHero).toBe(HEROES[1]);
-  });
+    expect(location.path()).toBe('/detail/12');
+  }));
 });

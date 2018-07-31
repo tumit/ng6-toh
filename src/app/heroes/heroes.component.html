@@ -1,10 +1,9 @@
 <h2 class="heroes__title">My Heroes</h2>
 <ul class="heroes">
-  <li class="hero__item" *ngFor="let hero of heroes"
-    [class.selected]="hero === selectedHero"
-    (click)="onSelect(hero)">
-    <span class="hero__item__id badge">{{hero.id}}</span>
-    <span class="hero__item__name">{{hero.name}}</span>
+  <li class="hero__item" *ngFor="let hero of heroes">
+    <a class="hero__link" routerLink="/detail/{{hero.id}}">
+      <span class="hero__item__id badge">{{hero.id}}</span>
+      <span class="hero__item__name">{{hero.name}}</span>
+    </a>
   </li>
 </ul>
-<app-hero-detail [hero]="selectedHero"></app-hero-detail>
